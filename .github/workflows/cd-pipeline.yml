@@ -1,0 +1,76 @@
+name: Continuous Deployment Pipeline
+# note:
+# It's useful to recognize that this workflow is designed to be triggered by a merge to the default branch.
+# Therefore, ${{ github.sha }} will always be in reference to the SHA that originally triggered this workflow.
+# $GITHUB_SHA, on the other hand, is created whenever actions/checkout@v4 is run
+
+# note:
+# environment:
+  # name:
+# is keyword for using the environment protections.
+
+# with:
+  # environment:
+# is simply using a variable named environment
+
+on:
+  push:
+    branches:
+      - master
+      - create-tag
+
+  workflow_dispatch:
+    inputs:
+      REF:
+        type: string
+        requires: yes
+
+env:
+  # REF: ${{ inputs.REF || 'master' }}
+  REF: ${{ inputs.REF || 'create-tag' }}
+
+jobs:
+  prepare-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.REF }}
+
+  pr-label-summary:
+    needs: prepare-deployment
+    uses: ./.github/workflows/pr-label-semver.yml
+    secrets: inherit
+
+  pre-tag-summary:
+    needs: pr-label-summary
+    uses: ./.github/workflows/pre-tag-summary.yml
+    secrets: inherit
+
+  create-and-post-tag:
+    needs: pre-tag-summary
+    uses: ./.github/workflows/create-and-post-tag.yml
+    secrets: inherit
+
+  create-release-notes:
+    needs: create-and-post-tag
+    uses: ./.github/workflows/create-release-notes.yml
+    secrets: inherit
+    with:
+      previousVersion: ${{ needs.create-and-post-tag.outputs.previousVersion }}
+
+  publish-release-notes:
+    needs: [create-release-notes]
+    uses: ./.github/workflows/publish-release-notes.yml
+    secrets: inherit
+    with:
+      draftReleaseReference: ${{ needs.create-release-notes.outputs.draftReleaseReference }}
+
+  build-mkdocs-image:
+    needs: [publish-release-notes, create-and-post-tag]
+    uses: ./.github/workflows/build-2.yml
+    secrets: inherit
+    with:
+      REF: ${{ needs.create-and-post-tag.outputs.newVersion }}
+
