@@ -72,5 +72,5 @@ jobs:
     uses: ./.github/workflows/build-2.yml
     secrets: inherit
     with:
-      REF: ${{ env.REF }}
+      REF: ${{ needs.create-and-post-tag.outputs.newVersion }}
 
