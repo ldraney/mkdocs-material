@@ -30,7 +30,7 @@ async function createDraftRelease(github, owner, repo, tag_name, body) {
       tag_name,
       name: `${tag_name} - ${formatDate()}`,
       body,
-      draft: true,
+      draft: false,
       prerelease: false,
     });
 
