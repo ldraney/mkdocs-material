@@ -1,0 +1,13 @@
+name: General Issue
+description: Use this template to submit any general issue or request
+body:
+
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: Issue Description
+      description: >-
+        Please provide a detailed description of your issue, request, or idea.
+        You can develop this over time by editing your submission as needed.
+      validations:
+        required: true
