@@ -22,8 +22,8 @@ on:
   workflow_dispatch:
     inputs:
       REF:
-      type: string
-      requires: yes
+        type: string
+        requires: yes
 
 env:
   # REF: ${{ inputs.REF || 'master' }}
