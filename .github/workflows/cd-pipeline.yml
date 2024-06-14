@@ -44,12 +44,12 @@ jobs:
     secrets: inherit
 
   pre-tag-summary:
-    needs: deploy-to-perf
+    needs: pr-label-summary
     uses: ./.github/workflows/pre-tag-summary.yml
     secrets: inherit
 
   create-and-post-tag:
-    needs: merge-to-release
+    needs: pre-tag-summary
     uses: ./.github/workflows/create-and-post-tag.yml
     secrets: inherit
 
@@ -61,7 +61,7 @@ jobs:
       previousVersion: ${{ needs.create-and-post-tag.outputs.previousVersion }}
 
   publish-release-notes:
-    needs: [create-release-notes, approval-deploy-prod]
+    needs: [create-release-notes]
     uses: ./.github/workflows/publish-release-notes.yml
     secrets: inherit
     with:
