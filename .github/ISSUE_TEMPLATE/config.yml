@@ -18,7 +18,7 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-blank_issues_enabled: false
+blank_issues_enabled: true
 contact_links:
   - name: Ask a question
     url: https://github.com/squidfunk/mkdocs-material/discussions
